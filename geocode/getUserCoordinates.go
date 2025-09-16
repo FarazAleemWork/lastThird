@@ -6,12 +6,16 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
-	"regexp"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
 
+/*
+// TODO: use url encoder or something to write this, formatting yourself is not normal iggg
+// this function builds the url to call the get function for the geocoder api
 func buildUrl(city string, state string, country string) string {
 	replaceWhiteSpace := regexp.MustCompile(`\s+`)
 	var formattedCity string = replaceWhiteSpace.ReplaceAllString(city, "%")
@@ -24,11 +28,35 @@ func buildUrl(city string, state string, country string) string {
 	var geoCodeGetUrl string = "https://geocode.maps.co/search?q=" + formattedCity + "%" + formattedState + "%" + formattedCountry + "&api_key=" + geoCodeApiKey
 	println(geoCodeGetUrl)
 	return geoCodeGetUrl
+}*/
+
+// Building url the correct way with net/url
+func urlBuilder(city string, state string, country string) string {
+	godotenv.Load("c:/lastThird/environmentvar.env")
+	geoCodeApiKey := os.Getenv("GEOCODE_API_KEY")
+
+	baseUrl := "https://geocode.maps.co/search"
+
+	url, err := url.Parse(baseUrl)
+	if err != nil {
+		log.Fatalf("failed to parse URL: %v", err)
+	}
+
+	queryParams := url.Query()
+	queryParams.Set("q", city+" "+state+" "+country)
+	queryParams.Set("api_key", geoCodeApiKey)
+
+	url.RawQuery = queryParams.Encode()
+
+	geoCodeUrl := url.String()
+	fmt.Println(geoCodeUrl)
+	return geoCodeUrl
 }
 
+// this function uses the url and actually sends the request and returns the respone
 func GetCoordinates(city string, state string, country string) ([]byte, error) {
 
-	url := buildUrl(city, state, country)
+	url := urlBuilder(city, state, country)
 	fmt.Printf(url)
 	method := "GET"
 
@@ -64,27 +92,48 @@ func GetCoordinates(city string, state string, country string) ([]byte, error) {
 	return geoCodeResponseBody, nil
 }
 
+// this is how you take responses in GO and make parsing easier
 type GeocodeResponse []struct {
 	Latitude  string `json:"lat"`
 	Longitude string `json:"lon"`
 }
 
-func ProcessGeoData(city, state, country string) {
-	jsonBody, error := GetCoordinates(city, state, country)
-	if error != nil {
-		log.Printf("Error getting user's coordinates", error)
-		return
+// this function is parsing the response data to return the lattitude and longitude
+func ProcessGeoData(city, state, country string) (float64, float64) {
+	jsonBody, err := GetCoordinates(city, state, country)
+	if err != nil {
+		log.Printf("Error getting user's coordinates", err)
+		return 1, .1
 	}
 
 	var response GeocodeResponse
 	if err := json.Unmarshal(jsonBody, &response); err != nil {
 		log.Printf("Error unmarshalling JSON: %v", err)
-		return
+		return 1, .2
+
 	}
 
-	if len(response) > 0 {
-		getFirstResult := response[0]
-		fmt.Println(getFirstResult.Latitude)
-		fmt.Println(getFirstResult.Longitude)
+	if len(response) == 0 {
+		log.Printf("No results found for the given location")
+		os.Exit(1)
 	}
+	getFirstResult := response[0]
+	fmt.Println(getFirstResult.Latitude)
+	fmt.Println(getFirstResult.Longitude)
+
+	lattitudeFloat, err := strconv.ParseFloat(getFirstResult.Latitude, 64)
+	if err != nil {
+		fmt.Println("problem converting lattitude string to float")
+		return 1, .4
+
+	}
+
+	longitudeFloat, err := strconv.ParseFloat(getFirstResult.Longitude, 64)
+	if err != nil {
+		fmt.Println("problem converting longitute string to float")
+		return 1, .5
+
+	}
+
+	return lattitudeFloat, longitudeFloat
 }

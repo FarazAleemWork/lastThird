@@ -1,9 +1,11 @@
 package main
 
 import (
-	geocode "lastThird/geocode"
+	//"lastThird/geocode"
+	calculate "lastThird/prayertimecalc"
 )
 
 func main() {
-	geocode.ProcessGeoData("Montreal", "Quebec", "Canada")
+	calculate.GetTahajjud("london", "ontario", "canada")
+	//geocode.ProcessGeoData("toronto", "ontario", "canada")
 }
