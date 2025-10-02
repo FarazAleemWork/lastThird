@@ -30,10 +30,10 @@ func buildUrl(city string, state string, country string) string {
 
 // Building url the correct way with net/url
 func urlBuilder(city string, state string, country string) string {
-	//pass env variable for api key at docker image run time 
-	//docker run -e GEOCODE_API_KEY=<apikay> testenv 
+	//pass env variable for api key at docker image run time
+	//docker run -e GEOCODE_API_KEY=<apikay> testenv
 	geoCodeApiKey := os.Getenv("GEOCODE_API_KEY")
-	if geoCodeApiKey == ""{
+	if geoCodeApiKey == "" {
 		log.Fatalln("GEOCODE API KEY NOT SET")
 	}
 	log.Println("GEOCODE_API_KEY", geoCodeApiKey)
@@ -81,14 +81,13 @@ func GetCoordinates(city string, state string, country string) ([]byte, error) {
 	defer geoCodeResult.Body.Close()
 
 	if geoCodeResult.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("API request failed with status: %s", geoCodeResult.Status, geoCodeResult)
+		return nil, fmt.Errorf("API request failed with status: ", geoCodeResult.Status, geoCodeResult)
 	}
 
 	geoCodeResponseBody, error := io.ReadAll(geoCodeResult.Body)
 	if error != nil {
 		log.Println(error)
 		return nil, fmt.Errorf("Failed to read response body: ", error)
-
 	}
 
 	fmt.Println(string(geoCodeResponseBody))
