@@ -36,12 +36,12 @@ func apiGeocode(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	fs := http.FileServer(http.Dir("./frontend"))
+	fs := http.FileServer(http.Dir("lastThirdApp/frontend"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Serving index.html for", r.URL.Path)
-		http.ServeFile(w, r, "frontend/index.html")
+		http.ServeFile(w, r, "lastThirdApp/frontend/index.html")
 	})
 
 	http.HandleFunc("/api/geocode", apiGeocode)

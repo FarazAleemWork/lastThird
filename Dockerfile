@@ -1,14 +1,11 @@
-FROM golang:1.25.1-alpine
+FROM golang:1.25.1
 
-WORKDIR /app/lastThirdApp
-
-COPY go.mod go.sum ./
-RUN go mod download
+WORKDIR /app
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o bin/lastthird ./lastThirdApp
+RUN go build -o main ./lastThirdApp/main.go
 
 EXPOSE 8080
 
-ENTRYPOINT [ "/app/lastThirdApp/bin/lastthird" ]
+CMD ["./main"]
