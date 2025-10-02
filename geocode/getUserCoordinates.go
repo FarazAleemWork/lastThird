@@ -57,7 +57,7 @@ func urlBuilder(city string, state string, country string) string {
 func GetCoordinates(city string, state string, country string) ([]byte, error) {
 
 	url := urlBuilder(city, state, country)
-	fmt.Printf(url)
+	//fmt.Printf(url)
 	method := "GET"
 
 	client := &http.Client{}
@@ -65,13 +65,13 @@ func GetCoordinates(city string, state string, country string) ([]byte, error) {
 	geoCodeRequest, error := http.NewRequest(method, url, nil)
 
 	if error != nil {
-		fmt.Println(error)
+		log.Println(error)
 		return nil, fmt.Errorf("Request Creation Failed: ", error)
 	}
 
 	geoCodeResult, error := client.Do(geoCodeRequest)
 	if error != nil {
-		fmt.Println(error)
+		log.Println(error)
 		return nil, fmt.Errorf("API request failed: ", error)
 
 	}
@@ -83,7 +83,7 @@ func GetCoordinates(city string, state string, country string) ([]byte, error) {
 
 	geoCodeResponseBody, error := io.ReadAll(geoCodeResult.Body)
 	if error != nil {
-		fmt.Println(error)
+		log.Println(error)
 		return nil, fmt.Errorf("Failed to read response body: ", error)
 
 	}
@@ -115,7 +115,6 @@ func ProcessGeoData(city, state, country string) (float64, float64) {
 
 	if len(response) == 0 {
 		log.Printf("No results found for the given location")
-		os.Exit(1)
 	}
 	getFirstResult := response[0]
 	fmt.Println(getFirstResult.Latitude)

@@ -1,11 +1,45 @@
 package main
 
 import (
-	//"lastThird/geocode"
+	"encoding/json"
+	"log"
+	"net/http"
+
 	calculate "lastThird/prayertimecalc"
 )
 
+func apiGeocode(w http.ResponseWriter, r *http.Request) {
+	q := r.URL.Query()
+	city := q.Get("city")
+	state := q.Get("state")
+	country := q.Get("country")
+	timezone := q.Get("timezone")
+
+	if city == "" || state == "" || country == "" || timezone == "" {
+		http.Error(w, `{"error":"missing required parameter"}`, http.StatusBadRequest)
+		return
+	}
+
+	tahajjudStart, err := calculate.GetTahajjud(city, state, country, timezone)
+	if err != nil {
+		http.Error(w, `{"error":"internal error computing tahajjud"}`, http.StatusInternalServerError)
+		log.Println("GetTahajjud error: ", err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	enc := json.NewEncoder(w)
+	if err := enc.Encode(map[string]interface{}{"Tahajjud starts at": tahajjudStart}); err != nil {
+		http.Error(w, `{"error":"failed to encode response"}`, http.StatusInternalServerError)
+		return
+	}
+}
+
 func main() {
-	calculate.GetTahajjud("london", "ontario", "canada")
-	//geocode.ProcessGeoData("toronto", "ontario", "canada")
+	fs := http.FileServer(http.Dir("./frontend"))
+	http.Handle("/", fs)
+	http.HandleFunc("/api/geocode", apiGeocode)
+
+	log.Println("listening on :8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }

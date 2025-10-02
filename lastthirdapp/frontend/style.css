@@ -1,0 +1,73 @@
+:root{
+  --bg:#90D5FF;
+  --panel:#E5F3FD;
+  --accent:#0b3d91;
+  --muted:#6b7a89;
+  --border: rgba(11,61,145,0.12);
+  --shadow: rgba(2,10,20,0.06);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: "Segoe UI", Roboto, system-ui, -apple-system, "Helvetica Neue", Arial;
+  background:linear-gradient(180deg,var(--bg),#e9f1f8);
+  color:var(--accent);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  padding:32px 16px;
+  display:flex;
+  justify-content:center;
+}
+.page{ width:100%; max-width:660px; }
+.hero{ margin-bottom:18px; }
+.hero-inner{ display:flex; align-items:center; gap:18px; justify-content:center; flex-wrap:wrap; text-align:center; }
+.mosque-icon{ width:64px; height:64px; color:var(--accent); flex:0 0 64px; }
+h1{ margin:0; font-size:32px; color:var(--accent); font-weight:700; }
+.lead{ margin:6px 0 0; color:var(--muted); }
+
+/* card / form */
+.card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 8px 24px var(--shadow);
+}
+.form .field{display:block;margin-bottom:12px}
+.label-text{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+input, select{
+  width:100%;
+  padding:12px 14px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--accent);
+  font-size:16px;
+  outline:none;
+}
+input::placeholder{color:rgba(107,122,137,0.35)}
+select{appearance:none;background-image:none}
+.actions{display:flex;justify-content:center;margin-top:8px}
+.btn{
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  padding:10px 22px;
+  border-radius:8px;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 8px 18px rgba(11,61,145,0.12);
+}
+.btn:disabled{opacity:.6;cursor:default}
+
+/* divider and result */
+.divider{border:0;border-top:1px solid rgba(11,61,145,0.06);margin:20px 0}
+.result{display:flex;align-items:flex-start;gap:14px;color:var(--accent)}
+.result-icon{font-size:30px;background:rgba(11,61,145,0.06);padding:12px;border-radius:8px;border:1px solid rgba(11,61,145,0.08)}
+.result-title{font-weight:700;color:var(--accent);margin-bottom:6px}
+.result-text{color:var(--accent);font-size:18px}
+@media (max-width:420px){
+  .mosque-icon{ width:48px; height:48px; }
+  h1{font-size:24px}
+}
