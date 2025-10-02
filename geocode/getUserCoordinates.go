@@ -9,8 +9,6 @@ import (
 	"net/url"
 	"os"
 	"strconv"
-
-	"github.com/joho/godotenv"
 )
 
 /*
@@ -32,8 +30,13 @@ func buildUrl(city string, state string, country string) string {
 
 // Building url the correct way with net/url
 func urlBuilder(city string, state string, country string) string {
-	godotenv.Load("c:/lastThird/environmentvar.env")
+	//pass env variable for api key at docker image run time 
+	//docker run -e GEOCODE_API_KEY=<apikay> testenv 
 	geoCodeApiKey := os.Getenv("GEOCODE_API_KEY")
+	if geoCodeApiKey == ""{
+		log.Fatalln("GEOCODE API KEY NOT SET")
+	}
+	log.Println("GEOCODE_API_KEY", geoCodeApiKey)
 
 	baseUrl := "https://geocode.maps.co/search"
 
