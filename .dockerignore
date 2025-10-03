@@ -1,1 +1,11 @@
 environmentvar.env
+terraformIaC/terraform.tfstate
+terraformIaC/terraform.tfstate.backup
+terraformIaC/.terraform/
+*.tfstate
+*.tfstate.backup
+*.tf
+*.tfstate
+*.tfvars
+.terraform/
+*.env

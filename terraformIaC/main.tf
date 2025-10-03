@@ -156,7 +156,36 @@ resource "azurerm_virtual_machine_extension" "docker" {
 
   settings = <<SETTINGS
     {
- "commandToExecute": "bash -c 'until command -v docker; do echo waiting for docker...; sleep 5; done && docker run -d --restart unless-stopped -p 8080:8080 -e GEOCODE_API_KEY=${var.geocode_api_key} farazaleemwork/whenistahajjud:v2'"
+ "commandToExecute": "bash -c 'until command -v docker; do echo waiting for docker...; sleep 5; done && docker run -d --restart unless-stopped -p 8080:8080 -e GEOCODE_API_KEY=${var.geocode_api_key} farazaleemwork/whenistahajjud:latest'"
     } 
   SETTINGS
+}
+
+resource "azurerm_monitor_diagnostic_setting" "vm_logs" {
+  name                       = "tj-vm-monitoring"
+  target_resource_id         = azurerm_linux_virtual_machine.tj-linux-vm.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.tj-workspace-logs.id
+
+  metric {
+    category = "AllMetrics"
+    enabled  = true
+  }
+
+  log {
+    category = "Syslog"
+    enabled  = true
+  }
+
+  log {
+    category = "LinuxSysLog"
+    enabled  = true
+  }
+}
+
+resource "azurerm_log_analytics_workspace" "tj-workspace-logs" {
+  name                = "tahajjud-logs"
+  location            = azurerm_resource_group.tahajjud-app-rg.location
+  resource_group_name = azurerm_resource_group.tahajjud-app-rg.name
+  sku                 = "PerGB2018"
+  retention_in_days   = 10
 }

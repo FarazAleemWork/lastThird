@@ -4,6 +4,12 @@ services:
         container_name: tj-app
         ports:
             - "8080:8080"
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10m"
+                max-file: "3"
+    
         networks:
             - webnetinter
     
@@ -18,6 +24,11 @@ services:
             - /etc/letsencrypt:/etc/nginx/certs:ro
         depends_on:
             - app
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10m"
+                max-file: "3"
         networks:
             - webnetinter
 
