@@ -24,7 +24,7 @@ jobs:
 
     - name: Build Go app
       run: |
-        cd lastThirdApp
+        cd lastthirdapp
         go build -o main .
 
     - name: Log in to Docker Hub
