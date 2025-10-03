@@ -1,0 +1,17 @@
+#cloud-config
+package_update: true
+packages:
+  - docker.io
+  - docker-compose
+  - certbot 
+
+runcmd:
+  - systemctl start docker
+  - systemctl enable docker
+  - mkdir -p /opt/tahajjud
+  - cd /opt/tahajjud
+  - echo "${compose_content}" > /opt/tahajjud/docker-compose.yml
+  - echo "${nginx_content}" > /opt/tahajjud/nginx.conf
+  - docker-compose up -d
+  - certbot certonly --standalone -d whenistahajjud.com --non-interactive --agree-tos -m you@example.com
+  - docker-compose restart nginx

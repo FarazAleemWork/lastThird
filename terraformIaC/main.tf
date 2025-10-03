@@ -53,14 +53,28 @@ resource "azurerm_network_security_group" "tahajjud-nsg" {
   }
 }
 
-resource "azurerm_network_security_rule" "tj-test-rule1" {
-  name                        = "tj-test-rule1"
+resource "azurerm_network_security_rule" "tjrule1" {
+  name                        = "tjrule1-AllowHTTP"
   priority                    = 100
   direction                   = "Inbound"
   access                      = "Allow"
-  protocol                    = "*"
+  protocol                    = "Tcp"
   source_port_range           = "*"
-  destination_port_range      = "*"
+  destination_port_range      = "80"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.tahajjud-app-rg.name
+  network_security_group_name = azurerm_network_security_group.tahajjud-nsg.name
+}
+
+resource "azurerm_network_security_rule" "tjrule2" {
+  name                        = "tjrule2-AllowHTTPS"
+  priority                    = 101
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "443"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.tahajjud-app-rg.name
@@ -142,7 +156,7 @@ resource "azurerm_virtual_machine_extension" "docker" {
 
   settings = <<SETTINGS
     {
- "commandToExecute": "bash -c 'until command -v docker; do echo waiting for docker...; sleep 5; done && docker run -d --restart unless-stopped -p 8080:8080 -e GEOCODE_API_KEY=${var.geocode_api_key} farazaleemwork/whenistahajjud:v1'"
+ "commandToExecute": "bash -c 'until command -v docker; do echo waiting for docker...; sleep 5; done && docker run -d --restart unless-stopped -p 8080:8080 -e GEOCODE_API_KEY=${var.geocode_api_key} farazaleemwork/whenistahajjud:v2'"
     } 
   SETTINGS
 }
