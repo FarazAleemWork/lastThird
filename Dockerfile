@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN go build -o main ./lastThirdApp/main.go
+RUN go build -o main ./lastthirdapp/main.go
 
 EXPOSE 8080
 
