@@ -8,4 +8,5 @@ terraformIaC/.terraform/
 *.tfstate
 *.tfvars
 .terraform/
+.dockerignore
 *.env
