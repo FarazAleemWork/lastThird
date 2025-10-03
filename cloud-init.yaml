@@ -6,12 +6,25 @@ packages:
   - certbot 
 
 runcmd:
+  - apt-get update
+  - apt-get install -y docker.io docker-compose
   - systemctl start docker
   - systemctl enable docker
+  - |
+    until docker info >/dev/null 2>&1; do
+      echo "waiting for docker..."
+      sleep 5
+    done
   - mkdir -p /opt/tahajjud
   - cd /opt/tahajjud
-  - echo "${compose_content}" > /opt/tahajjud/docker-compose.yml
-  - echo "${nginx_content}" > /opt/tahajjud/nginx.conf
-  - docker-compose up -d
+  - |
+    cat <<EOF > /opt/tahajjud/docker-compose.yml
+    ${compose_content}
+    EOF
+  - |
+    cat <<EOF > /opt/tahajjud/nginx.conf
+    ${nginx_content}
+    EOF
   - certbot certonly --standalone -d whenistahajjud.com --non-interactive --agree-tos -m you@example.com
+  - docker-compose up -d
   - docker-compose restart nginx

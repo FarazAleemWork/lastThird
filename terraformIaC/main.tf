@@ -123,7 +123,7 @@ resource "azurerm_linux_virtual_machine" "tj-linux-vm" {
   admin_username        = "adminuser"
   network_interface_ids = [azurerm_network_interface.tj-nic.id]
 
-  custom_data = filebase64("customdata.tpl")
+  custom_data = filebase64("../cloud-init.yaml")
 
   admin_ssh_key {
     username   = "adminuser"
@@ -146,39 +146,17 @@ resource "azurerm_linux_virtual_machine" "tj-linux-vm" {
 
 }
 
-resource "azurerm_virtual_machine_extension" "docker" {
-  depends_on           = [azurerm_linux_virtual_machine.tj-linux-vm]
-  name                 = "docker-setup"
-  virtual_machine_id   = azurerm_linux_virtual_machine.tj-linux-vm.id
-  publisher            = "Microsoft.Azure.Extensions"
-  type                 = "CustomScript"
-  type_handler_version = "2.0"
-
-  settings = <<SETTINGS
-    {
- "commandToExecute": "bash -c 'until command -v docker; do echo waiting for docker...; sleep 5; done && docker run -d --restart unless-stopped -p 8080:8080 -e GEOCODE_API_KEY=${var.geocode_api_key} farazaleemwork/whenistahajjud:latest'"
-    } 
-  SETTINGS
-}
-
 resource "azurerm_monitor_diagnostic_setting" "vm_logs" {
   name                       = "tj-vm-monitoring"
   target_resource_id         = azurerm_linux_virtual_machine.tj-linux-vm.id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.tj-workspace-logs.id
 
-  metric {
+  enabled_metric {
     category = "AllMetrics"
-    enabled  = true
   }
 
-  log {
-    category = "Syslog"
-    enabled  = true
-  }
-
-  log {
-    category = "LinuxSysLog"
-    enabled  = true
+  enabled_log {
+    category = "LinuxSyslog"
   }
 }
 
@@ -187,5 +165,5 @@ resource "azurerm_log_analytics_workspace" "tj-workspace-logs" {
   location            = azurerm_resource_group.tahajjud-app-rg.location
   resource_group_name = azurerm_resource_group.tahajjud-app-rg.name
   sku                 = "PerGB2018"
-  retention_in_days   = 10
+  retention_in_days   = 30
 }
