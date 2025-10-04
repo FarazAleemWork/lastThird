@@ -35,13 +35,14 @@ func apiGeocode(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// remove /app/ when running locally or i guess i can mkdir lastthird in docker
 func main() {
-	fs := http.FileServer(http.Dir("lastThirdApp/frontend"))
+	fs := http.FileServer(http.Dir("/app/lastthirdapp/frontend"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Serving index.html for", r.URL.Path)
-		http.ServeFile(w, r, "lastThirdApp/frontend/index.html")
+		http.ServeFile(w, r, "/app/lastthirdapp/frontend/index.html")
 	})
 
 	http.HandleFunc("/api/geocode", apiGeocode)

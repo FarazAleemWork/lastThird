@@ -1,7 +1,7 @@
 version: '3'
 services:
   app:
-    image: farazaleemwork/whenistahajjud:version9
+    image: farazaleemwork/whenistahajjud:version10
     container_name: tj-app
     ports:
       - "8080:8080"
@@ -11,7 +11,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - webnetinter
+      - webnet
 
   nginx:
     image: nginx:latest
@@ -30,7 +30,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - webnetinter
+      - webnet
 
 networks:
-  webnetinter:
+  webnet:

@@ -10,3 +10,4 @@ terraformIaC/.terraform/
 .terraform/
 .dockerignore
 *.env
+terraformIaC/

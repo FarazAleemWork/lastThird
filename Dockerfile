@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-#For local run use RUN go build -o main ./lastThirdApp/main.go
+#For local run use RUN go build -o main ./lastthirdapp/main.go
 RUN go build -o main ./lastthirdapp/main.go
 
 EXPOSE 8080
