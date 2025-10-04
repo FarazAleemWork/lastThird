@@ -81,6 +81,20 @@ resource "azurerm_network_security_rule" "tjrule2" {
   network_security_group_name = azurerm_network_security_group.tahajjud-nsg.name
 }
 
+resource "azurerm_network_security_rule" "tjrule3" {
+  name                        = "tjrule2-AllowSSH"
+  priority                    = 102
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "*"
+  source_port_range           = "*"
+  destination_port_range      = "22"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.tahajjud-app-rg.name
+  network_security_group_name = azurerm_network_security_group.tahajjud-nsg.name
+}
+
 resource "azurerm_subnet_network_security_group_association" "tj-nsg-assoc" {
   subnet_id                 = azurerm_subnet.tahajjud-sn.id
   network_security_group_id = azurerm_network_security_group.tahajjud-nsg.id
@@ -123,7 +137,11 @@ resource "azurerm_linux_virtual_machine" "tj-linux-vm" {
   admin_username        = "adminuser"
   network_interface_ids = [azurerm_network_interface.tj-nic.id]
 
-  custom_data = filebase64("../cloud-init.yaml")
+
+  custom_data = base64encode(templatefile("cloud-init.yml", {
+    compose_content = file("${path.module}/configs/docker-compose.yml"),
+    nginx_content   = file("${path.module}/configs/nginx.conf")
+  }))
 
   admin_ssh_key {
     username   = "adminuser"
@@ -144,26 +162,4 @@ resource "azurerm_linux_virtual_machine" "tj-linux-vm" {
 
   provision_vm_agent = true
 
-}
-
-resource "azurerm_monitor_diagnostic_setting" "vm_logs" {
-  name                       = "tj-vm-monitoring"
-  target_resource_id         = azurerm_linux_virtual_machine.tj-linux-vm.id
-  log_analytics_workspace_id = azurerm_log_analytics_workspace.tj-workspace-logs.id
-
-  enabled_metric {
-    category = "AllMetrics"
-  }
-
-  enabled_log {
-    category = "LinuxSyslog"
-  }
-}
-
-resource "azurerm_log_analytics_workspace" "tj-workspace-logs" {
-  name                = "tahajjud-logs"
-  location            = azurerm_resource_group.tahajjud-app-rg.location
-  resource_group_name = azurerm_resource_group.tahajjud-app-rg.name
-  sku                 = "PerGB2018"
-  retention_in_days   = 30
 }
