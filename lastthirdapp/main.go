@@ -2,10 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
+	calculate "lastThird/prayertimecalc"
 	"log"
 	"net/http"
-
-	calculate "lastThird/prayertimecalc"
+	"strings"
 )
 
 func apiGeocode(w http.ResponseWriter, r *http.Request) {
@@ -15,8 +16,24 @@ func apiGeocode(w http.ResponseWriter, r *http.Request) {
 	country := q.Get("country")
 	timezone := q.Get("timezone")
 
-	if city == "" || state == "" || country == "" || timezone == "" {
-		http.Error(w, `{"error":"missing required parameter"}`, http.StatusBadRequest)
+	missing := []string{}
+	if city == "" {
+		missing = append(missing, "city")
+	}
+	if state == "" {
+		missing = append(missing, "state")
+	}
+	if country == "" {
+		missing = append(missing, "country")
+	}
+	if timezone == "" {
+		missing = append(missing, "timezone")
+	}
+
+	if len(missing) > 0 {
+		msg := fmt.Sprintf(`{"error":"missing required parameter(s): %v"}`, strings.Join(missing, ", "))
+		http.Error(w, msg, http.StatusBadRequest)
+		log.Printf("Bad request: %v", msg)
 		return
 	}
 

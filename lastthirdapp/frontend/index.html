@@ -29,17 +29,17 @@
       <form id="locForm" class="form">
         <label class="field">
           <span class="label-text">City</span>
-          <input id="city" name="city" autocomplete="off" required />
+          <input type="text" id="city" name="city" autocomplete="off" maxlength="30" pattern="^[A-Za-z\s\-]+$" required />
         </label>
 
         <label class="field">
           <span class="label-text">State / Province</span>
-          <input id="state" name="state" autocomplete="off" required />
+          <input type="text" id="state" name="state" autocomplete="off" maxlength="30" pattern="^[A-Za-z\s\-]+$" required />
         </label>
 
         <label class="field">
           <span class="label-text">Country</span>
-          <input id="country" name="country" autocomplete="off" required />
+          <input type="text" id="country" name="country" autocomplete="off" maxlength="30" pattern="^[A-Za-z\s\-]+$" required />
         </label>
 
         <label class="field">
@@ -108,15 +108,6 @@
         ];
         fallback.forEach(addOption);
       }
-
-      // preselect user's timezone when available
-      try {
-        const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        if (userTz) {
-          const opt = Array.from(tzSelect.options).find(o => o.value === userTz);
-          if (opt) opt.selected = true;
-        }
-      } catch (e) { /* ignore */ }
     })();
   </script>
 
