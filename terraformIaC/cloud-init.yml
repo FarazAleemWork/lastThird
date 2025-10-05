@@ -17,10 +17,10 @@ write_files:
 
 bootcmd: 
   - apt-get update
-
-runcmd:
   - apt-get install ca-certificates curl
   - apt-get install -y docker.io docker-compose
+
+runcmd:
   - sudo install -m 0755 -d /etc/apt/keyrings
   - sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
   - sudo chmod a+r /etc/apt/keyrings/docker.asc
