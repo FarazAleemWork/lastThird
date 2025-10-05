@@ -31,7 +31,7 @@ func GetPrayerTimes(lat float64, long float64, timezone string) (time.Time, time
 
 	err = prayerTimes.SetTimeZone(timezone)
 	if err != nil {
-		log.Println("got error %+v", err)
+		log.Printf("got error %+v", err)
 	}
 
 	/* Can use for other apps or debugging. Will also need this to account for day light savings

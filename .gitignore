@@ -5,3 +5,4 @@ terraformIaC/.terraform/
 *.tfstate
 *.tfstate.backup
 *.env
+vars.tfvars
