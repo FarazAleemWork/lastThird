@@ -17,6 +17,8 @@ write_files:
 
 bootcmd: 
   - apt-get update
+
+runcmd:
   - apt-get install ca-certificates curl
   - apt-get install -y docker.io docker-compose
   - sudo install -m 0755 -d /etc/apt/keyrings
@@ -26,8 +28,6 @@ bootcmd:
   - sudo apt-get install docker-compose-plugin
   - systemctl enable docker
   - echo "docker enabling" >> /var/log/cloud-init-output.log
-
-runcmd:
   - echo "docker debug" >> /var/log/cloud-init-output.log
   - bash -c 'until docker info >/dev/null 2>&1; do echo "waiting for docker..."; sleep 5; done'
   #- certbot certonly --standalone -d whenistahajjud.com --non-interactive --agree-tos -m you@example.com
