@@ -2,7 +2,6 @@ package prayertimecalc
 
 import (
 	fmt "fmt"
-	geocode "lastThird/geocode"
 	log "log"
 	time "time"
 
@@ -12,8 +11,7 @@ import (
 )
 
 // utilizaes the adhan go package to calculate all the prayer times of a given location
-func GetPrayerTimes(city string, state string, country string, timezone string) (time.Time, time.Time) {
-	lat, long := geocode.ProcessGeoData(city, state, country)
+func GetPrayerTimes(lat float64, long float64, timezone string) (time.Time, time.Time) {
 
 	date := data.NewDateComponents(time.Date(2025, time.Month(9), 6, 0, 0, 0, 0, time.UTC))
 	fmt.Println(date)
@@ -48,8 +46,8 @@ func GetPrayerTimes(city string, state string, country string, timezone string) 
 }
 
 // Using the prayer times from GetPrayerTimes, this method subtracts the time from isha to maghrib
-func GetTahajjud(city string, state string, country string, timezone string) (string, error) {
-	fajr, maghrib := GetPrayerTimes(city, state, country, timezone)
+func GetTahajjud(lat float64, long float64, timezone string) (string, error) {
+	fajr, maghrib := GetPrayerTimes(lat, long, timezone)
 
 	nextFajr := fajr.Add(time.Hour * 24)
 	duration := maghrib.Sub(nextFajr)

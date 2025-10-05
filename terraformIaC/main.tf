@@ -139,6 +139,7 @@ resource "azurerm_linux_virtual_machine" "tj-linux-vm" {
 
 
   custom_data = base64encode(templatefile("cloud-init.yml", {
+    geocode_api_key = var.geocode_api_key,
     compose_content = file("${path.module}/configs/docker-compose.yml"),
     nginx_content   = file("${path.module}/configs/nginx.conf")
   }))

@@ -32,6 +32,8 @@ func buildUrl(city string, state string, country string) string {
 func urlBuilder(city string, state string, country string) string {
 	//pass env variable for api key at docker image run time
 	//docker run -e GEOCODE_API_KEY=<apikay> testenv
+	//geoCodeApiKey := //"INSERT LOCAL API KEY"
+
 	geoCodeApiKey := os.Getenv("GEOCODE_API_KEY")
 	if geoCodeApiKey == "" {
 		log.Fatalln("GEOCODE API KEY NOT SET")
@@ -69,25 +71,25 @@ func GetCoordinates(city string, state string, country string) ([]byte, error) {
 
 	if error != nil {
 		log.Println(error)
-		return nil, fmt.Errorf("Request Creation Failed: ", error)
+		return nil, fmt.Errorf("request Creation Failed: %v", error)
 	}
 
 	geoCodeResult, error := client.Do(geoCodeRequest)
 	if error != nil {
 		log.Println(error)
-		return nil, fmt.Errorf("API request failed: ", error)
+		return nil, fmt.Errorf("API request failed: %v", error)
 
 	}
 	defer geoCodeResult.Body.Close()
 
 	if geoCodeResult.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("API request failed with status: ", geoCodeResult.Status, geoCodeResult)
+		return nil, fmt.Errorf("api request failed with status: %v", geoCodeResult.Status)
 	}
 
 	geoCodeResponseBody, error := io.ReadAll(geoCodeResult.Body)
 	if error != nil {
 		log.Println(error)
-		return nil, fmt.Errorf("Failed to read response body: ", error)
+		return nil, fmt.Errorf("failed to read response body: %v", error)
 	}
 
 	fmt.Println(string(geoCodeResponseBody))
@@ -101,17 +103,17 @@ type GeocodeResponse []struct {
 }
 
 // this function is parsing the response data to return the lattitude and longitude
-func ProcessGeoData(city, state, country string) (float64, float64) {
+func ProcessGeoData(city, state, country string) (float64, float64, error) {
 	jsonBody, err := GetCoordinates(city, state, country)
 	if err != nil {
-		log.Printf("Error getting user's coordinates", err)
-		return 1, .1
+		log.Printf("Error getting user's coordinates %v", err)
+		return 0, 0, err
 	}
 
 	var response GeocodeResponse
 	if err := json.Unmarshal(jsonBody, &response); err != nil {
 		log.Printf("Error unmarshalling JSON: %v", err)
-		return 1, .2
+		return 0, 0, err
 
 	}
 
@@ -125,16 +127,15 @@ func ProcessGeoData(city, state, country string) (float64, float64) {
 	lattitudeFloat, err := strconv.ParseFloat(getFirstResult.Latitude, 64)
 	if err != nil {
 		fmt.Println("problem converting lattitude string to float")
-		return 1, .4
+		return 0, 0, err
 
 	}
 
 	longitudeFloat, err := strconv.ParseFloat(getFirstResult.Longitude, 64)
 	if err != nil {
 		fmt.Println("problem converting longitute string to float")
-		return 1, .5
-
+		return 0, 0, err
 	}
 
-	return lattitudeFloat, longitudeFloat
+	return lattitudeFloat, longitudeFloat, nil
 }
