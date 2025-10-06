@@ -14,14 +14,11 @@ write_files:
     permissions: '0644'
     content: |
       ${indent(6, nginx_content)}
-
-bootcmd: 
+# bootcmd: 
+runcmd:
   - apt-get update
   - apt-get install ca-certificates curl
   - apt-get install -y docker.io docker-compose
-  - apt-get install -y certbot python3-certbot-nginx
-
-runcmd:
   - sudo install -m 0755 -d /etc/apt/keyrings
   - sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
   - sudo chmod a+r /etc/apt/keyrings/docker.asc
@@ -38,5 +35,3 @@ runcmd:
   - echo "we are here" >> /var/log/cloud-init-output.log
   # Start App 
   - docker-compose -f /opt/tahajjud/docker-compose.yml up -d
-  - certbot --nginx -d whenistahajjud.club --non-interactive --agree-tos -m you@example.com
-  - echo "certbot completed" >> /var/log/cloud-init-output.log

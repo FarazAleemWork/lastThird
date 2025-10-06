@@ -1,7 +1,7 @@
 version: '3'
 services:
   app:
-    image: farazaleemwork/whenistahajjud:version16
+    image: farazaleemwork/whenistahajjud:version17
     container_name: tj-app
     ports:
       - "8080:8080"
