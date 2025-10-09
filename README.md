@@ -4,7 +4,6 @@
 This app gives users the last third of the night which is a special time for muslims 
 
 ## Live Site (Possibly online Azure is expensive or you can spin it up with the docker image or with the main.tf & config/cloudinit files)
-Access the running instance: [http://9.169.153.147](http://9.169.153.147)
 
 ## Technologies Used 
 
